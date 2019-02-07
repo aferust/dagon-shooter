@@ -28,9 +28,9 @@ long_line_behaviour=1
 long_line_column=72
 
 [files]
-current_page=2
-FILE_NAME_0=9575;D;0;EUTF-8;0;1;0;D%3A%5Cprojects%5Cd_projects%5Cdagon-shooter%5Csource%5Cmainscene.d;0;4
-FILE_NAME_1=715;D;0;EUTF-8;0;1;0;D%3A%5Cprojects%5Cd_projects%5Cdagon-shooter%5Csource%5Cenemy.d;0;4
+current_page=1
+FILE_NAME_0=267;D;0;EUTF-8;0;1;0;D%3A%5Cprojects%5Cd_projects%5Cdagon-shooter%5Csource%5Cmainscene.d;0;4
+FILE_NAME_1=109;D;0;EUTF-8;0;1;0;D%3A%5Cprojects%5Cd_projects%5Cdagon-shooter%5Csource%5Cenemy.d;0;4
 FILE_NAME_2=41;None;0;EUTF-8;0;1;0;%5Cprojects%5Cd_projects%5Cdagon-shooter%5C.gitignore;0;4
 
 [build-menu]

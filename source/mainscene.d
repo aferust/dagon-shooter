@@ -294,6 +294,7 @@ class MainScene: Scene
         
     }
     
+    // TODO: Enemies will shoot and collide the ship also.
     void spawnEnemy(){
         auto rnd = Random(unpredictableSeed);
         float myRndXPos = uniform!"[]"(-10.0f, 10.0f, rnd);
@@ -317,9 +318,9 @@ class MainScene: Scene
             float xx = 2.0f * sin(zz * 20.0f * PI / 180.0f); // y = amplitude * sin(x * period * pi / 180)
             
             Vector3f right = Vector3f(xx, 0.0f, 0.0f);
-            Vector3f forward = Vector3f(0.0f, 0.0f, -2.0f);
+            Vector3f forward = Vector3f(0.0f, 0.0f, -4.0f);
             
-            float speed = 10.0f;
+            float speed = 20.0f;
             Vector3f dir = Vector3f(0.0f, 0.0f, 0.0f);
             dir += forward;
             dir += right;
@@ -414,6 +415,7 @@ class MainScene: Scene
         
         // this is a rotation sequence of three terrains stitched along the z axiz
         // this simply emulates a parallax logic
+        // TODO: We need matching edged high map
         foreach(ter; [eTerrain1, eTerrain2, eTerrain3]){
             if( ter.position.z + terrainSize.z <= 0){
                 ter.position = Vector3f(-terrainSize.x * 0.5, terrainYoffset, -terrainSize.z * 0.5 + 2*terrainSize.z);
