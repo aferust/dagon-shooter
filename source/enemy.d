@@ -4,6 +4,8 @@ import dagon;
 import std.math : sin, PI;
 import std.stdio;
 
+// this module is not used yet
+
 class EnemyController: EntityController {
     
     this(Entity e){
