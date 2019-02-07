@@ -211,24 +211,24 @@ class MainScene: Scene
         eTerrain1 = createEntity3D();
         auto heightmap = New!ImageHeightmap(aHeightmap.texture.image, 20, assetManager);
         auto terrain = New!Terrain(256, 80, heightmap, assetManager);
-        Vector3f size = Vector3f(256, 0, 256) * eTerrain1.scaling;
-        terrainSize = size;
+        terrainSize = Vector3f(256, 0, 256) * eTerrain1.scaling;
+        
         eTerrain1.drawable = terrain;
-        eTerrain1.position = Vector3f(-size.x * 0.5, terrainYoffset, -size.z * 0.5);
+        eTerrain1.position = Vector3f(-terrainSize.x * 0.5, terrainYoffset, -terrainSize.z * 0.5);
         eTerrain1.solid = true;
         eTerrain1.material = matGround;
         eTerrain1.dynamic = false;
         
         eTerrain2 = createEntity3D();
         eTerrain2.drawable = terrain;
-        eTerrain2.position = Vector3f(-size.x * 0.5, terrainYoffset, -size.z * 0.5 + size.z);
+        eTerrain2.position = Vector3f(-terrainSize.x * 0.5, terrainYoffset, -terrainSize.z * 0.5 + terrainSize.z);
         eTerrain2.solid = true;
         eTerrain2.material = matGround;
         eTerrain2.dynamic = false;
         
         eTerrain3 = createEntity3D();
         eTerrain3.drawable = terrain;
-        eTerrain3.position = Vector3f(-size.x * 0.5, terrainYoffset, -size.z * 0.5 + 2*size.z);
+        eTerrain3.position = Vector3f(-terrainSize.x * 0.5, terrainYoffset, -terrainSize.z * 0.5 + 2*terrainSize.z);
         eTerrain3.solid = true;
         eTerrain3.material = matGround;
         eTerrain3.dynamic = false;
