@@ -50,7 +50,7 @@ enum BulletStat{
 class MainScene: Scene
 {
     OBJAsset aOBJBullet;
-    OBJAsset ucakAsset;
+    OBJAsset shipAsset;
     OBJAsset enemyOBJ;
     
     Material rayleighSkyMaterial;
@@ -126,7 +126,7 @@ class MainScene: Scene
         aTexGroundRoughness = addTextureAsset("data/terrain/desert-roughness.png");
         aHeightmap = addTextureAsset("data/terrain/heightmap.png");
         
-        ucakAsset = addOBJAsset("data/ship/ship.obj");
+        shipAsset = addOBJAsset("data/ship/ship.obj");
         shipTexture = addTextureAsset("data/ship/shiptexture.png");
         
         enemyOBJ = addOBJAsset("data/suzanne.obj");
@@ -139,7 +139,7 @@ class MainScene: Scene
     }
     
     void prepareShip(){
-        ship.drawable = ucakAsset.mesh;
+        ship.drawable = shipAsset.mesh;
         auto shipmat = createMaterial();
         shipmat.diffuse = shipTexture.texture;
         ship.material = shipmat;
