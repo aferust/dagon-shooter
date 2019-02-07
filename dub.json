@@ -1,0 +1,13 @@
+{
+	"description": "My first project",
+	"dependencies": {
+		"dagon": "~master",
+        "bindbc-soloud": "~master"
+	},
+	"authors": [
+		"aferust"
+	],
+	"copyright": "Copyright © 2019, aferust",
+	"license": "Boost",
+	"name": "dagon-shooter"
+}
