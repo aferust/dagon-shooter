@@ -10,6 +10,8 @@ import dagon;
 import soloud;
 import enemyctrl;
 
+// Ship model is from Angel David Guzmán - PixelOz. Credit to PixelOz Designs
+
 struct Circle {
     float radius;
     float x;
