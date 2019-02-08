@@ -106,9 +106,10 @@ class MainScene: Scene
         
         loadSoloud();
         soloud = Soloud.create();
-        soloud.init();
+        soloud.init(Soloud.CLIP_ROUNDOFF | Soloud.LEFT_HANDED_3D);
         bang = WavStream.create();
         bang.load("data/laser_shot_silenced.ogg");
+        bang.set3dDistanceDelay(true);
         
         terrainYoffset = -15.0f;
     }
@@ -294,12 +295,10 @@ class MainScene: Scene
         bulletmat.emission = Color4f(1.0f, 0.0f, 1.0f, 1.0f);
         bullet.material = bulletmat;
         
-        // there is something wrong here. left and right speakers are reverted in my PC? And z axis has no effect on sounds.
-        soloud.set3dListenerPosition(eCamera.position.x, eCamera.position.y, eCamera.position.z);
         int voice = soloud.play3d(bang, ship.position.x, ship.position.y, ship.position.z);
-        soloud.set3dSourcePosition(voice, ship.position.x, ship.position.y, ship.position.z);
+        soloud.set3dSourceMinMaxDistance(voice, 1.0f, 50.0f);
+        soloud.set3dSourceAttenuation(voice, 2, 1.0f);
         soloud.update3dAudio();
-        
     }
     
     void moveBullets(double dt){
@@ -453,6 +452,11 @@ class MainScene: Scene
     override void onUpdate(double dt){
         super.onUpdate(dt);
         
+        soloud.set3dListenerPosition(eCamera.position.x, eCamera.position.y, eCamera.position.z);
+        soloud.set3dListenerAt(eCamera.direction.x, eCamera.direction.y, eCamera.direction.z);
+        soloud.set3dListenerUp(eCamera.up.x, eCamera.up.y, eCamera.up.z);
+        soloud.update3dAudio();
+        
         float speed = 10.0f;
         Vector3f dir = Vector3f(0.0f, 0.0f, 0.0f);
         float step = 5.0f;
@@ -497,6 +501,7 @@ class MainScene: Scene
             }
             
         }
+        
         
         enemy_delayer += dt;
         
