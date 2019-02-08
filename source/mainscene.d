@@ -207,7 +207,7 @@ class MainScene: Scene
         fpview.camera.turn = -180.0f;
         fpview.camera.pitch = 25.0f; // Is there any lookAt(position) function?
         fpview.active = true;
-        view = fpview;
+        view = New!Freeview(eventManager, assetManager); //fpview;
         
         //view = New!Freeview(eventManager, assetManager);
         
@@ -233,9 +233,11 @@ class MainScene: Scene
         matGround.textureScale = Vector2f(25, 25);
         
         eTerrain1 = createEntity3D();
-        auto heightmap = New!ImageHeightmap(aHeightmap.texture.image, 20, assetManager);
+        auto heightmap = New!OpenSimplexHeightmap(assetManager);
+        heightmap.tiling = true;
         auto terrain = New!Terrain(256, 80, heightmap, assetManager);
-        terrainSize = Vector3f(256, 0, 256) * eTerrain1.scaling;
+        //New!ImageHeightmap(aHeightmap.texture.image, 20, assetManager);
+        terrainSize = Vector3f(255, 0, 255) * eTerrain1.scaling;
         
         eTerrain1.drawable = terrain;
         eTerrain1.position = Vector3f(-terrainSize.x * 0.5, terrainYoffset, -terrainSize.z * 0.5);
@@ -437,13 +439,9 @@ class MainScene: Scene
         eTerrain2.position += dirT.normalized * speed * dt;
         eTerrain3.position += dirT.normalized * speed * dt;
         
-        // this is a rotation sequence of three terrains stitched along the z axiz
-        // this simply emulates a parallax logic
-        // TODO: We need matching edged high map
         foreach(ter; [eTerrain1, eTerrain2, eTerrain3]){
-            if( ter.position.z + terrainSize.z <= 0){
-                ter.position = Vector3f(-terrainSize.x * 0.5, terrainYoffset, -terrainSize.z * 0.5 + 2*terrainSize.z);
-            }
+            if (ter.position.z <= -terrainSize.z)
+                ter.position.z = terrainSize.z * 2;
         }
     }
     
