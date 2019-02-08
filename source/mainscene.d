@@ -110,7 +110,7 @@ class MainScene: Scene
         bang = WavStream.create();
         bang.load("data/laser_shot_silenced.ogg");
         
-        terrainYoffset = -4.0f;
+        terrainYoffset = -15.0f;
     }
     
     ~this(){
@@ -207,7 +207,7 @@ class MainScene: Scene
         fpview.camera.turn = -180.0f;
         fpview.camera.pitch = 25.0f; // Is there any lookAt(position) function?
         fpview.active = true;
-        view = New!Freeview(eventManager, assetManager); //fpview;
+        view = fpview;
         
         //view = New!Freeview(eventManager, assetManager);
         
