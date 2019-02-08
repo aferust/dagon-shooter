@@ -110,7 +110,7 @@ class MainScene: Scene
         bang = WavStream.create();
         bang.load("data/laser_shot_silenced.ogg");
         
-        terrainYoffset = -4.0f;
+        terrainYoffset = -15.0f;
     }
     
     ~this(){
@@ -232,16 +232,21 @@ class MainScene: Scene
         matGround.parallax = ParallaxSimple;
         matGround.textureScale = Vector2f(25, 25);
         
+        Vector3f terrainScaling = Vector3f(1, 0.5, 1);
+        
         eTerrain1 = createEntity3D();
-        auto heightmap = New!ImageHeightmap(aHeightmap.texture.image, 20, assetManager);
+        auto heightmap = New!OpenSimplexHeightmap(assetManager);
+        heightmap.tiling = true;
         auto terrain = New!Terrain(256, 80, heightmap, assetManager);
-        terrainSize = Vector3f(256, 0, 256) * eTerrain1.scaling;
+        //New!ImageHeightmap(aHeightmap.texture.image, 20, assetManager);
+        terrainSize = Vector3f(255, 0, 255) * terrainScaling;
         
         eTerrain1.drawable = terrain;
         eTerrain1.position = Vector3f(-terrainSize.x * 0.5, terrainYoffset, -terrainSize.z * 0.5);
         eTerrain1.solid = true;
         eTerrain1.material = matGround;
         eTerrain1.dynamic = false;
+        eTerrain1.scaling = terrainScaling;
         
         eTerrain2 = createEntity3D();
         eTerrain2.drawable = terrain;
@@ -249,6 +254,7 @@ class MainScene: Scene
         eTerrain2.solid = true;
         eTerrain2.material = matGround;
         eTerrain2.dynamic = false;
+        eTerrain2.scaling = terrainScaling;
         
         eTerrain3 = createEntity3D();
         eTerrain3.drawable = terrain;
@@ -256,6 +262,7 @@ class MainScene: Scene
         eTerrain3.solid = true;
         eTerrain3.material = matGround;
         eTerrain3.dynamic = false;
+        eTerrain3.scaling = terrainScaling;
         
         //auto eGround = createEntity3D();
         //eGround.drawable = New!ShapePlane(50, 50, 1, assetManager);
@@ -437,13 +444,9 @@ class MainScene: Scene
         eTerrain2.position += dirT.normalized * speed * dt;
         eTerrain3.position += dirT.normalized * speed * dt;
         
-        // this is a rotation sequence of three terrains stitched along the z axiz
-        // this simply emulates a parallax logic
-        // TODO: We need matching edged high map
         foreach(ter; [eTerrain1, eTerrain2, eTerrain3]){
-            if( ter.position.z + terrainSize.z <= 0){
-                ter.position = Vector3f(-terrainSize.x * 0.5, terrainYoffset, -terrainSize.z * 0.5 + 2*terrainSize.z);
-            }
+            if (ter.position.z <= -terrainSize.z)
+                ter.position.z = terrainSize.z * 2;
         }
     }
     
