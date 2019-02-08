@@ -333,31 +333,10 @@ class MainScene: Scene
         enemy.drawable = enemyOBJ.mesh;
         enemy.position = Vector3f(myRndXPos, 2.0f, 70.0f);
         enemy.rotation = rotationQuaternion(Axis.y, degtorad(180.0f));
+        enemy.updateTransformation(0.0);
         
-        // if EntityController is used enemies do not move, why?
-        // I wish we could just derive Entity class
-        
-        //auto enemyCtrl = New!EnemyController(enemy);
-        //enemy.controller = enemyCtrl;
-    }
-    
-    void moveEnemies(double dt){ // don't use this if EntityController is implemented?
-        foreach(entity; enemies.children){
-            //entity.controller.update(dt);
-            float zz = entity.position.z;
-            float xx = 2.0f * sin(zz * 20.0f * PI / 180.0f); // y = amplitude * sin(x * period * pi / 180)
-            
-            Vector3f right = Vector3f(xx, 0.0f, 0.0f);
-            Vector3f forward = Vector3f(0.0f, 0.0f, -4.0f);
-            
-            float speed = 20.0f;
-            Vector3f dir = Vector3f(0.0f, 0.0f, 0.0f);
-            dir += forward;
-            dir += right;
-            
-            if(entity !is null) entity.position += dir.normalized * speed * dt;
-        }
-            
+        auto enemyCtrl = New!EnemyController(enemy);
+        enemy.controller = enemyCtrl;
     }
     
     void removeEnemiesIfOutOfBounds(){
@@ -515,7 +494,6 @@ class MainScene: Scene
         removeEnemiesIfOutOfBounds();
         removeBulletsIfOutOfBounds();
         
-        moveEnemies(dt);
         moveBullets(dt);
         
         scoreText.text = format("Score: %s", score);

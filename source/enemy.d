@@ -4,7 +4,8 @@ import dagon;
 import std.math : sin, PI;
 import std.stdio;
 
-// this module is not used yet
+import dlib.math.matrix;
+import dlib.math.transformation;
 
 class EnemyController: EntityController {
     
@@ -17,14 +18,21 @@ class EnemyController: EntityController {
         float xx = 2.0f * sin(zz * 20.0f * PI / 180.0f); // y = amplitude * sin(x * period * pi / 180)
         
         Vector3f right = Vector3f(xx, 0.0f, 0.0f);
-        Vector3f forward = Vector3f(0.0f, 0.0f, -2.0f);
+        Vector3f forward = Vector3f(0.0f, 0.0f, -4.0f);
         
-        float speed = 10.0f;
+        float speed = 20.0f;
         Vector3f dir = Vector3f(0.0f, 0.0f, 0.0f);
         dir += forward;
         dir += right;
         
         entity.position += dir.normalized * speed * dt;
+        
+        entity.transformation =
+            translationMatrix(entity.position) *
+            entity.rotation.toMatrix4x4 *
+            scaleMatrix(entity.scaling);
+
+        entity.invTransformation = entity.transformation.inverse;
         
         //writeln(entity.position.x);
     }
