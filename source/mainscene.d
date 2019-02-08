@@ -482,11 +482,11 @@ class MainScene: Scene
             ship.rotation.normalize();
         }
         
-        bullet_delayer += 0.5;
+        bullet_delayer += dt;
         
         if (eventManager.keyPressed[KEY_SPACE]) {
             
-            if(bullet_delayer > 2.5){
+            if(bullet_delayer > 0.15){
                 fireBullet();
                 bullet_delayer = 0.0;
             }
