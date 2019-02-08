@@ -11,5 +11,6 @@ docs/
 *-test-*
 *.exe
 *.o
-*.obj
 *.lst
+dub.selections.json
+gamecontrollerdb.txt

@@ -265,7 +265,7 @@ class MainScene: Scene
         bullets = createEntity3D();
         enemies = createEntity3D();
         
-        gui = New!NuklearGUI(&eventManager, assetManager);
+        gui = New!NuklearGUI(eventManager, assetManager);
         auto eNuklear = createEntity2D();
         eNuklear.drawable = gui;
         scoreText = New!TextLine(aFontDroidSans20.font, "0", assetManager);
