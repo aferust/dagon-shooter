@@ -94,6 +94,8 @@ class MainScene: Scene
     
     uint score = 0;
     
+    Material bulletmat;
+    
     this(SceneManager smngr)
     {
         super(smngr);
@@ -211,9 +213,6 @@ class MainScene: Scene
         view = fpview;
         
         //view = New!Freeview(eventManager, assetManager);
-        
-        auto bulletmat = createMaterial();
-        bulletmat.diffuse = Color4f(1.0, 0.2, 0.2, 1.0);
 
         ship = createEntity3D(); // TODO: need an original 3D model
         prepareShip();
@@ -273,6 +272,10 @@ class MainScene: Scene
         bullets = createEntity3D();
         enemies = createEntity3D();
         
+        bulletmat = createMaterial();
+        bulletmat.diffuse = Color4f(1.0f, 0.0f, 0.0f, 1.0f);
+        bulletmat.emission = Color4f(1.0f, 0.0f, 1.0f, 1.0f);
+        
         gui = New!NuklearGUI(eventManager, assetManager);
         auto eNuklear = createEntity2D();
         eNuklear.drawable = gui;
@@ -289,11 +292,9 @@ class MainScene: Scene
         bullet.position = ship.position;
         bullet.position.y -= 1.0f; // fix model shift
         bullet.drawable = aOBJBullet.mesh;
-        
-        auto bulletmat = createMaterial();
-        bulletmat.diffuse = Color4f(1.0f, 0.0f, 0.0f, 1.0f);
-        bulletmat.emission = Color4f(1.0f, 0.0f, 1.0f, 1.0f);
         bullet.material = bulletmat;
+        bullet.castShadow = false;
+        bullet.updateTransformation(0.0);
         
         int voice = soloud.play3d(bang, ship.position.x, ship.position.y, ship.position.z);
         soloud.set3dSourceMinMaxDistance(voice, 1.0f, 50.0f);
@@ -304,7 +305,7 @@ class MainScene: Scene
     void moveBullets(double dt){
         foreach(bullet; bullets.children){
             Vector3f forward = Vector3f(0.0f, 0.0f, 10.0f);
-            float speed = 12.0f;
+            float speed = 20.0f;
             Vector3f dir = Vector3f(0.0f, 0.0f, 0.0f);
             dir += forward;
             if(bullet !is null) bullet.position += dir.normalized * speed * dt;
