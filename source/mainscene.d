@@ -63,6 +63,7 @@ class MainScene: Scene
     
     TextureAsset shipTexture;
     TextureAsset jetParticleTex;
+    TextureAsset boomParticleTex;
     
     Vector3f terrainSize;
     
@@ -71,6 +72,7 @@ class MainScene: Scene
     Entity ship;
     Entity bullets;
     Entity enemies;
+    Entity booms;
     Entity eCamera;
     
     float terrainYoffset;
@@ -95,6 +97,7 @@ class MainScene: Scene
     uint score = 0;
     
     Material bulletmat;
+    Material boomMat;
     
     this(SceneManager smngr)
     {
@@ -139,6 +142,8 @@ class MainScene: Scene
         aFontDroidSans20 = addFontAsset("data/font/DroidSans.ttf", 20);
         
         jetParticleTex = addTextureAsset("data/particle/jetparticle16.png");
+        
+        boomParticleTex = addTextureAsset("data/particle/boom32.png");
     }
     
     void prepareShip(){
@@ -193,7 +198,6 @@ class MainScene: Scene
     override void onAllocate(){
         super.onAllocate();
         
-        // I have no idea how illuminating/sun works for now, just copied and pasted code here.
         environment.sunEnergy = 15.0f;
         sun = createLightSun(Quaternionf.identity, environment.sunColor, environment.sunEnergy);
         sun.shadow = true;
@@ -271,6 +275,7 @@ class MainScene: Scene
         
         bullets = createEntity3D();
         enemies = createEntity3D();
+        booms = createEntity3D();
         
         bulletmat = createMaterial();
         bulletmat.diffuse = Color4f(1.0f, 0.0f, 0.0f, 1.0f);
@@ -284,6 +289,14 @@ class MainScene: Scene
         auto eText = createEntity2D();
         eText.drawable = scoreText;
         eText.position = Vector3f(16.0f, 30.0f, 0.0f);
+        
+        // the material for explosion // okay, this needs improvements
+        boomMat = createParticleMaterial();
+        boomMat.diffuse = boomParticleTex.texture;
+        boomMat.particleSphericalNormal = true;
+        boomMat.blending = Transparent;
+        boomMat.depthWrite = true;
+        boomMat.energy = 1.0f;
     }
     
     void fireBullet(){
@@ -357,6 +370,7 @@ class MainScene: Scene
             if(isCircleCollision(bullet.position, 1.0f, enemy.position, 2.0f) && bullet.groupID  == BulletStat.ACTIVE){
                 
                 if(enemy !is null){
+                    auto epos = enemy.position;
                     enemies.removeChild(enemy);
                     deleteEntity(enemy);
                     
@@ -365,7 +379,8 @@ class MainScene: Scene
                     bullet.groupID = BulletStat.PASSIVE;
                     bullet.visible = false;
                     
-                    // TODO: explosion effect with particles and sound.
+                    makeExplosion(epos);
+                    
                     score ++;
                     break;
                     
@@ -387,6 +402,33 @@ class MainScene: Scene
         }
         
         return false;
+    }
+    
+    void makeExplosion(Vector3f pos){
+        
+        Entity eboom = createEntity3D(booms);
+        
+        eboom.position = pos;
+        
+        auto boomCtrl = New!BoomController(eboom, particleSystem, boomMat);
+        eboom.controller = boomCtrl;
+        
+        //TODO: a boom sound will place here.
+        
+    }
+    
+    void removeBoomsIfExpired(){ // A scheduled approach can omit this method.
+        // this loop causes random crashes.
+        foreach(boom; booms.children){
+            auto boomCtrl = cast(BoomController)boom.controller;
+            if(boomCtrl.lifetime > 0.2){
+                boomCtrl.emitterBoom.emitting = false; // how does an emitter to be removed safely? Please note that this line 
+                                                       // is not the only reason for crashes.
+                booms.removeChild(boom);
+                deleteEntity(boom);
+                
+            }
+        }
     }
     
     override void onKeyDown(int key){
@@ -491,7 +533,7 @@ class MainScene: Scene
         }
         
         removeEnemiesIfHit();
-        
+        removeBoomsIfExpired();
         removeEnemiesIfOutOfBounds();
         removeBulletsIfOutOfBounds();
         
