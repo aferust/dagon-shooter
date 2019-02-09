@@ -417,16 +417,14 @@ class MainScene: Scene
         
     }
     
-    void removeBoomsIfExpired(){ // A scheduled approach can omit this method.
-        // this loop causes random crashes.
+    void removeBoomsIfExpired(){
         foreach(boom; booms.children){
             auto boomCtrl = cast(BoomController)boom.controller;
             if(boomCtrl.lifetime > 0.2){
-                boomCtrl.emitterBoom.emitting = false; // how does an emitter to be removed safely? Please note that this line 
-                                                       // is not the only reason for crashes.
+                boomCtrl.emitterBoom.emitting = false; // how does an emitter to be removed safely? Is this enough to deallocate it?
                 booms.removeChild(boom);
                 deleteEntity(boom);
-                
+                break;
             }
         }
     }
