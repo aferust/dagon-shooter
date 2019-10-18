@@ -327,12 +327,11 @@ class MainScene: Scene
     }
     
     void removeBulletsIfOutOfBounds(){
-        foreach(bullet; bullets.children){
+        for(size_t i =  bullets.children.length; i-- > 0; ){
+            auto bullet = bullets.children[i];
             if(abs(bullet.position.z - ship.position.z) > 20.0f && bullet !is null){
                 bullets.children.removeAt(bullet.id);
-                //bullet.release();
                 deleteEntity(bullet);
-                break;
             }
         }
         
@@ -354,19 +353,19 @@ class MainScene: Scene
     }
     
     void removeEnemiesIfOutOfBounds(){
-        foreach(enemy; enemies.children){
+        for(size_t i =  enemies.children.length; i-- > 0; ){
+            auto enemy = enemies.children[i];
             if(enemy.position.z < -10.0f && enemy !is null){
                 enemies.children.removeAt(enemy.id);
-                //enemy.release();
                 deleteEntity(enemy);
-                break;
             }
         }
     }
     
     void removeEnemiesIfHit(){
         foreach(bullet; bullets.children)
-        foreach(enemy; enemies.children){
+        for(size_t i =  enemies.children.length; i-- > 0; ){
+            auto enemy = enemies.children[i];
             if(isCircleCollision(bullet.position, 1.0f, enemy.position, 2.0f) && bullet.groupID  == BulletStat.ACTIVE){
                 
                 if(enemy !is null){
@@ -382,8 +381,6 @@ class MainScene: Scene
                     makeExplosion(epos);
                     
                     score ++;
-                    break;
-                    
                 }
             }
         }
@@ -418,13 +415,13 @@ class MainScene: Scene
     }
     
     void removeBoomsIfExpired(){
-        foreach(boom; booms.children){
+        for(size_t i =  booms.children.length; i-- > 0; ){
+            auto boom = booms.children[i];
             auto boomCtrl = cast(BoomController)boom.controller;
             if(boomCtrl.lifetime > 0.2){
                 boomCtrl.emitterBoom.emitting = false; // how does an emitter to be removed safely? Is this enough to deallocate it?
                 booms.removeChild(boom);
                 deleteEntity(boom);
-                break;
             }
         }
     }
