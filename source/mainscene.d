@@ -201,9 +201,9 @@ class MainScene: Scene
         environment.sunEnergy = 15.0f;
         sun = createLightSun(Quaternionf.identity, environment.sunColor, environment.sunEnergy);
         sun.shadow = true;
-        environment.sunRotation =
+        /*environment.sunRotation =
             rotationQuaternion(Axis.y, degtorad(-45.0f)) *
-            rotationQuaternion(Axis.x, degtorad(-75.0f));
+            rotationQuaternion(Axis.x, degtorad(-75.0f));*/
         mainSun = sun;
         
         // I need a fixed camera view invariant from mouse movements.

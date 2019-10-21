@@ -1,8 +1,8 @@
 {
 	"description": "My first project",
 	"dependencies": {
-		"dagon": "~master",
-        "bindbc-soloud": "~master"
+		"dagon": "0.10.0",
+		"bindbc-soloud": "*"
 	},
 	"authors": [
 		"aferust"
