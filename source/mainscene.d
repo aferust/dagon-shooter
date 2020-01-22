@@ -75,12 +75,23 @@ class MainScene: Scene
     Entity booms;
     Entity eCamera;
     
-    float terrainYoffset;
+    ImageAsset aTexSkyFront;
+    ImageAsset aTexSkyBack;
+    ImageAsset aTexSkyLeft;
+    ImageAsset aTexSkyRight;
+    ImageAsset aTexSkyTop;
+    ImageAsset aTexSkyBottom;
+    Cubemap skyCubemap;
+    
+    CubemapRenderTarget cubemapRenderTarget;
+    Cubemap cubemap;
     
     LightSource sun;
     
     FirstPersonView fpview;
     
+    float terrainYoffset;
+
     float stepRotation;
     immutable float rotMagnitude; 
     bool isrleft, isrright;
@@ -125,7 +136,14 @@ class MainScene: Scene
         writeln("soloud is free!");
     }
     
-    override void onAssetsRequest(){   
+    override void onAssetsRequest(){  
+        aTexSkyFront = addImageAsset("data/skybox/sky_front.png");
+        aTexSkyBack = addImageAsset("data/skybox/sky_back.png");
+        aTexSkyLeft = addImageAsset("data/skybox/sky_left.png");
+        aTexSkyRight = addImageAsset("data/skybox/sky_right.png");
+        aTexSkyTop = addImageAsset("data/skybox/sky_top.png");
+        aTexSkyBottom = addImageAsset("data/skybox/sky_bottom.png");
+
         aTexGroundDiffuse = addTextureAsset("data/terrain/desert-albedo.png");
         aTexGroundNormal = addTextureAsset("data/terrain/desert-normal.png");
         aTexGroundHeight = addTextureAsset("data/terrain/desert-height.png");
@@ -197,15 +215,32 @@ class MainScene: Scene
     
     override void onAllocate(){
         super.onAllocate();
-        
         environment.sunEnergy = 15.0f;
+        environment.fogEnd = 1000.0f;
+        environment.atmosphericFog = true;
+        
+        skyCubemap = New!Cubemap(1024, assetManager);
+        //skyCubemap.fromEquirectangularMap(aEnvmap.texture);
+        skyCubemap.setFaceImage(CubeFace.PositiveZ, aTexSkyFront.image);
+        skyCubemap.setFaceImage(CubeFace.NegativeZ, aTexSkyBack.image);
+        skyCubemap.setFaceImage(CubeFace.PositiveX, aTexSkyRight.image);
+        skyCubemap.setFaceImage(CubeFace.NegativeX, aTexSkyLeft.image);
+        skyCubemap.setFaceImage(CubeFace.PositiveY, aTexSkyTop.image);
+        skyCubemap.setFaceImage(CubeFace.NegativeY, aTexSkyBottom.image);
+        environment.skyMap = skyCubemap;
+        environment.skyBrightness = 1.0f;
+        environment.environmentBrightness = 1.0f;
+
         sun = createLightSun(Quaternionf.identity, environment.sunColor, environment.sunEnergy);
         sun.shadow = true;
-        /*environment.sunRotation =
-            rotationQuaternion(Axis.y, degtorad(-45.0f)) *
-            rotationQuaternion(Axis.x, degtorad(-75.0f));*/
         mainSun = sun;
-        
+
+        cubemap = New!Cubemap(64, assetManager);
+        cubemapRenderTarget = New!CubemapRenderTarget(cubemap.width, assetManager);
+        renderer.renderToCubemap(Vector3f(0, 5, 0), cubemap);
+        //cubemap.fromEquirectangularMap(aEnvmap.image, 512);
+        environment.environmentMap = cubemap;
+
         // I need a fixed camera view invariant from mouse movements.
         // for now just don't touch damn mouse!
         eCamera = createEntity3D();
@@ -216,7 +251,24 @@ class MainScene: Scene
         fpview.active = true;
         view = fpview;
         
-        //view = New!Freeview(eventManager, assetManager);
+        // Post-processing settings
+        renderer.hdr.tonemapper = Tonemapper.ACES;
+        renderer.hdr.autoExposure = false;
+        renderer.hdr.exposure = 0.5f;
+        renderer.ssao.enabled = true;
+        renderer.ssao.power = 10.0;
+        renderer.motionBlur.enabled = true;
+        renderer.motionBlur.shutterSpeed = 1.0 / 24.0;
+        renderer.motionBlur.samples = 30;
+        renderer.glow.enabled = true;
+        renderer.glow.radius = 8;
+        renderer.glow.luminanceThreshold = 0.7;
+        renderer.glow.brightness = 0.5;
+        renderer.lensDistortion.enabled = false;
+        renderer.lensDistortion.dispersion = 0.2;
+        renderer.antiAliasing.enabled = true;
+        //renderer.lut.texture = aTexColorTable.texture;
+        //renderer.vignette.texture = aTexVignette.texture;
 
         ship = createEntity3D(); // TODO: need an original 3D model
         prepareShip();
@@ -226,7 +278,14 @@ class MainScene: Scene
         auto rRayleighShader = New!RayleighShader(assetManager);
         rayleighSkyMaterial = createMaterial(rRayleighShader);
         eSky = createSky(rayleighSkyMaterial);
-        
+
+        environment.skyMap = skyCubemap; //aEnvmap.texture;
+        eSky.material = defaultSkyMaterial;
+        //environment.skyBrightness = 1.0f;
+        environment.environmentMap = null;
+        renderer.renderToCubemap(Vector3f(0, 5, 0), cubemap, cubemapRenderTarget);
+        environment.environmentMap = cubemap;
+
         //terrain
         auto matGround = createMaterial();
         matGround.diffuse = aTexGroundDiffuse.texture;
