@@ -69,6 +69,7 @@ class MainScene: Scene
     
     Entity eSky;
     Entity eTerrain1, eTerrain2, eTerrain3;
+    Entity[3] terrains;
     Entity ship;
     Entity bullets;
     Entity enemies;
@@ -327,6 +328,7 @@ class MainScene: Scene
         eTerrain3.dynamic = false;
         eTerrain3.scaling = terrainScaling;
         
+        terrains = [eTerrain1, eTerrain2, eTerrain3];
         //auto eGround = createEntity3D();
         //eGround.drawable = New!ShapePlane(50, 50, 1, assetManager);
         //eGround.material = matGround;
@@ -519,7 +521,7 @@ class MainScene: Scene
         eTerrain2.position += dirT.normalized * speed * dt;
         eTerrain3.position += dirT.normalized * speed * dt;
         
-        foreach(ter; [eTerrain1, eTerrain2, eTerrain3]){
+        foreach(ter; terrains){
             if (ter.position.z <= -terrainSize.z)
                 ter.position.z = terrainSize.z * 2;
         }
